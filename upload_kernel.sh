@@ -17,7 +17,7 @@ DEVICE="asus-flo"
 KERNEL="qcom-apq8064"
 DTB_NAME="qcom-apq8064-asus-nexus7-flo.dtb"
 FILENAME="linux-$BRANCH"
-CMDLINE="xxxxxxxxxxxxxxxxxxxxxxxxxconsole=tty0 user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 vmalloc=340M drm.debug=2"
+CMDLINE="xxxxxxxxxxxxxxxxxxxxxxxxxconsole=tty0 user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 vmalloc=340M"
 BOOTSIZE="10000000" # 10M, always set it bigger than it was before, but has to fit into your boot partition
 
 echo ":: Working with branch $BRANCH"
