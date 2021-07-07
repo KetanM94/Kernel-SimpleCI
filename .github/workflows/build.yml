@@ -1,6 +1,14 @@
 # SPDX-License-Identifier: GPL-3.0-only
 name: Build
 
+env:
+  KERNEL_GITHUB_REPOSITORY: "okias/linux"
+  KERNEL_NAME: qcom-apq8064
+  KBUILD_DEFCONFIG: qcom_apq8064_defconfig
+  CROSS_COMPILE: arm-linux-gnueabihf- # build for armv7
+  ARCH_SPEC_PKGS: crossbuild-essential-armhf
+  ARCH: arm # build for armv7
+
 on:
   push:
     branches: [ master ]
@@ -16,51 +24,44 @@ jobs:
         kernel: [v4.14, v4.19, v5.4, v5.10, next]
     runs-on: ubuntu-latest
     env:
-      BRANCH: qcom-apq8064-${{ matrix.kernel }}
-      KBUILD_DEFCONFIG: qcom_apq8064_defconfig
       TUXMAKE_EXTRA_OPTS: "--kconfig-add CONFIG_GENERIC_IRQ_DEBUGFS=y" # for debugging, set what you need
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
-          repository: "okias/linux"
-          ref: ${{ env.BRANCH }}
+          repository: ${{ env.KERNEL_GITHUB_REPOSITORY }}
+          ref: ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
           path: linux
       - name: Build
         run: |
           sudo apt-get -qq update > /dev/null
-          sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 git build-essential binutils-multiarch crossbuild-essential-armhf device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
+          sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user tuxmake
-          dash ./build.sh
+          BRANCH=${{ env.KERNEL_NAME }}-${{ matrix.kernel }} dash ./build.sh
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ env.BRANCH }}"
+          automatic_release_tag: "${{ env.KERNEL_NAME }}-${{ matrix.kernel }}"
           prerelease: true
-          title: "Build ${{ env.BRANCH }}"
+          title: "Build ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}"
           files: |
             *.tar
   dtbs:
     strategy:
       fail-fast: false
       matrix:
-        kernel: [next]
+        kernel: [v5.10, next]
     runs-on: ubuntu-latest
-    env:
-      BRANCH: qcom-apq8064-${{ matrix.kernel }}
-      KBUILD_DEFCONFIG: qcom_apq8064_defconfig
-      CROSS_COMPILE: arm-linux-gnueabihf- # build for armv7
-      ARCH: arm # build for armv7
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
-          repository: "okias/linux"
-          ref: ${{ env.BRANCH }}
+          repository: ${{ env.KERNEL_GITHUB_REPOSITORY }}
+          ref: ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
           path: linux
       - name: Build
         run: |
           sudo apt-get -qq update > /dev/null
-          sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 libyaml-dev git build-essential binutils-multiarch crossbuild-essential-armhf device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
+          sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} libyaml-dev git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user git+https://github.com/devicetree-org/dt-schema.git@master
           dash ./dtb_check.sh
