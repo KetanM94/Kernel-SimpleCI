@@ -65,3 +65,23 @@ jobs:
           sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} libyaml-dev git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user git+https://github.com/devicetree-org/dt-schema.git@master
           dash ./dtb_check.sh
+  dt_bindings_check:
+    strategy:
+      fail-fast: false
+      matrix:
+        kernel: [v5.10, next]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ env.KERNEL_GITHUB_REPOSITORY }}
+          ref: ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
+          path: linux
+      - name: Build
+        run: |
+          sudo apt-get -qq update > /dev/null
+          sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} libyaml-dev git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
+          pip3 install -U --user git+https://github.com/devicetree-org/dt-schema.git@master
+          cd linux
+          make -j3 dt_binding_check
