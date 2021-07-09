@@ -34,10 +34,16 @@ jobs:
           path: linux
       - name: Build
         run: |
+          export BRANCH=${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
           sudo apt-get -qq update > /dev/null
           sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user tuxmake
-          BRANCH=${{ env.KERNEL_NAME }}-${{ matrix.kernel }} dash ./build.sh
+          tuxmake --directory linux --build-dir=cache/ --target-arch=arm -k $KBUILD_DEFCONFIG $TUXMAKE_EXTRA_OPTS
+          cd /home/runner/.cache/tuxmake/builds/1/
+          tar -cf linux-${BRANCH}.tar *
+          cd -
+          mv /home/runner/.cache/tuxmake/builds/1/linux-${BRANCH}.tar ./
+
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -64,7 +70,13 @@ jobs:
           sudo apt-get -qq update > /dev/null
           sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} libyaml-dev git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user git+https://github.com/devicetree-org/dt-schema.git@master
-          dash ./dtb_check.sh
+          cd linux
+          make defconfig
+          status=0
+          make -j3 dtbs || status=1
+          make -j3 dtbs_check || status=1
+          exit $status
+
   dt_bindings_check:
     strategy:
       fail-fast: false
