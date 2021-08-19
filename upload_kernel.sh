@@ -9,16 +9,16 @@ fi
 
 BRANCH=$1
 
-GITHUB_REPO="YOUR_username/YOUR_project_name" # customize for your set up repository name
+GITHUB_REPO="KetanM94/Kernel-SimpleCI" # customize for your set up repository name
 WORKDIR=`grep work ~/.config/pmbootstrap.cfg | cut -d" " -f3`
 
 # Setup for your device from deviceinfo & rest of pmaports information
-DEVICE="asus-flo"
-KERNEL="qcom-apq8064"
-DTB_NAME="qcom-apq8064-asus-nexus7-flo.dtb"
+DEVICE="xiaomi-ferrari"
+KERNEL="mainline-ferrari"
+DTB_NAME=""
 FILENAME="linux-$BRANCH"
-CMDLINE="xxxxxxxxxxxxxxxxxxxxxxxxxconsole=tty0 user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 vmalloc=340M"
-BOOTSIZE="10000000" # 10M, always set it bigger than it was before, but has to fit into your boot partition
+CMDLINE="console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlyprintk androidboot.selinux=permissive buildvariant=eng"
+BOOTSIZE="64000000" # 10M, always set it bigger than it was before, but has to fit into your boot partition
 
 echo ":: Working with branch $BRANCH"
 

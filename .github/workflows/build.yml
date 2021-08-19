@@ -2,18 +2,18 @@
 name: Build
 
 env:
-  KERNEL_GITHUB_REPOSITORY: "okias/linux"
-  KERNEL_NAME: qcom-apq8064
-  KBUILD_DEFCONFIG: qcom_apq8064_defconfig
-  CROSS_COMPILE: arm-linux-gnueabihf- # build for armv7
-  ARCH_SPEC_PKGS: crossbuild-essential-armhf
-  ARCH: arm # build for armv7
+  KERNEL_GITHUB_REPOSITORY: "msm8939-mainline/msm8916-mainline-linux"
+  KERNEL_NAME: mainline-ferrari
+  KBUILD_DEFCONFIG: msm8939_defconfig pmosferrari.config
+  CROSS_COMPILE: aarch64-linux-gnu- # build for aarch64
+  ARCH_SPEC_PKGS: crossbuild-essential-aarch64
+  ARCH: aarch64 # build for aarch64
 
 on:
   push:
-    branches: [ master ]
+    branches: [ v5.9-rc1-ferrari ]
   pull_request:
-    branches: [ master ]
+    branches: [ v5.9-rc1-ferrari ]
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kernel: [v4.14, v4.19, v5.4, v5.10, next]
+        kernel: [v5.9-rc1]
     runs-on: ubuntu-latest
     env:
       TUXMAKE_EXTRA_OPTS: "--kconfig-add CONFIG_GENERIC_IRQ_DEBUGFS=y" # for debugging, set what you need
@@ -38,7 +38,7 @@ jobs:
           sudo apt-get -qq update > /dev/null
           sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user tuxmake
-          tuxmake --directory linux --build-dir=cache/ --target-arch=arm -k $KBUILD_DEFCONFIG $TUXMAKE_EXTRA_OPTS
+          tuxmake --directory linux --build-dir=cache/ --target-arch=aarch64 -k $KBUILD_DEFCONFIG $TUXMAKE_EXTRA_OPTS
           cd /home/runner/.cache/tuxmake/builds/1/
           tar -cf linux-${BRANCH}.tar *
           cd -
@@ -56,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kernel: [v5.10, next]
+        kernel: [v5.9-rc1]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kernel: [v5.10, next]
+        kernel: [v5.9-rc1]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
