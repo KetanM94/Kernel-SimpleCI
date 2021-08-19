@@ -3,17 +3,17 @@ name: Build
 
 env:
   KERNEL_GITHUB_REPOSITORY: "msm8939-mainline/msm8916-mainline-linux"
-  KERNEL_NAME: v5.9-rc1-ferrari
+  KERNEL_NAME: mainline-ferrari
   KBUILD_DEFCONFIG: msm8939_defconfig pmosferrari.config
   CROSS_COMPILE: aarch64-linux-gnu- # build for aarch64
   ARCH_SPEC_PKGS: crossbuild-essential-aarch64
   ARCH: aarch64 # build for aarch64
 
 on:
-  push:
-    branches: [ v5.9-rc1-ferrari ]
-  pull_request:
-    branches: [ v5.9-rc1-ferrari ]
+  #push:
+    #branches: [ main ]
+  #pull_request:
+    #branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kernel: [v5.9-rc1]
+        kernel: [v5.9-rc1-ferrari]
     runs-on: ubuntu-latest
     env:
       TUXMAKE_EXTRA_OPTS: "--kconfig-add CONFIG_GENERIC_IRQ_DEBUGFS=y" # for debugging, set what you need
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: ${{ env.KERNEL_GITHUB_REPOSITORY }}
-          ref: ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
+          ref: ${{ matrix.kernel }}
           path: linux
       - name: Build
         run: |
@@ -56,14 +56,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kernel: [v5.9-rc1]
+        kernel: [v5.9-rc1-ferrari]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
           repository: ${{ env.KERNEL_GITHUB_REPOSITORY }}
-          ref: ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
+          ref: ${{ matrix.kernel }}
           path: linux
       - name: Build
         run: |
@@ -81,14 +81,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kernel: [v5.9-rc1]
+        kernel: [v5.9-rc1-ferrari]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
           repository: ${{ env.KERNEL_GITHUB_REPOSITORY }}
-          ref: ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
+          ref: ${{ matrix.kernel }}
           path: linux
       - name: Build
         run: |
