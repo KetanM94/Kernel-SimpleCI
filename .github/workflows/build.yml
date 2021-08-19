@@ -34,7 +34,7 @@ jobs:
           path: linux
       - name: Build
         run: |
-          export BRANCH=${{ env.KERNEL_NAME }}-${{ matrix.kernel }}
+          export BRANCH=${{ matrix.kernel }}
           sudo apt-get -qq update > /dev/null
           sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user tuxmake
