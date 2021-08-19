@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
 # This script serves for purpose downloading kernel from CI and booting it on the device using fastboot
 
