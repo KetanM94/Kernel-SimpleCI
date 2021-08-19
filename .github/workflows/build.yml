@@ -4,7 +4,8 @@ name: Build
 env:
   KERNEL_GITHUB_REPOSITORY: "msm8939-mainline/msm8916-mainline-linux"
   KERNEL_NAME: mainline-ferrari
-  KBUILD_DEFCONFIG: msm8939_defconfig pmosferrari.config
+  KBUILD_DEFCONFIG: msm8939_defconfig
+  KBUILD_DEFCONFIG_PMOS: pmosferrari.config
   CROSS_COMPILE: aarch64-linux-gnu- # build for aarch64
   ARCH_SPEC_PKGS: crossbuild-essential-arm64
   ARCH: arm64 # build for aarch64
@@ -38,7 +39,7 @@ jobs:
           sudo apt-get -qq update > /dev/null
           sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat > /dev/null
           pip3 install -U --user tuxmake
-          tuxmake --directory linux --build-dir=cache/ --target-arch=aarch64 -k $KBUILD_DEFCONFIG $TUXMAKE_EXTRA_OPTS
+          tuxmake --directory linux --build-dir=cache/ --target-arch=aarch64 -k $KBUILD_DEFCONFIG  --kconfig-add $KBUILD_DEFCONFIG_PMOS $TUXMAKE_EXTRA_OPTS
           cd /home/runner/.cache/tuxmake/builds/1/
           tar -cf linux-${BRANCH}.tar *
           cd -
