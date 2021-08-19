@@ -18,11 +18,11 @@ KERNEL="mainline-ferrari"
 DTB_NAME=""
 FILENAME="linux-$BRANCH"
 CMDLINE="console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlyprintk androidboot.selinux=permissive buildvariant=eng"
-BOOTSIZE="64000000" # 10M, always set it bigger than it was before, but has to fit into your boot partition
+BOOTSIZE="32000000" # 10M, always set it bigger than it was before, but has to fit into your boot partition
 
 echo ":: Working with branch $BRANCH"
 
-#echo :: NOT DOWNLOADING NEW KERNEL!!!
+echo ":: NOw DOWNLOADING NEW KERNEL!!!"
 curl -L -O "https://github.com/${GITHUB_REPO}/releases/download/${BRANCH}/${FILENAME}.tar"
 
 rm linux -rf
@@ -31,13 +31,14 @@ cp $FILENAME.tar linux/
 cd linux
 tar xf $FILENAME.tar
 
+gunzip Image.gz
 tar xfJ dtbs.tar.xz
 
-cat zImage dtbs/${DTB_NAME} > zImage-dtbs || exit
+cat Image dtbs/qcom/* > Image-dtbs || exit
 
 sudo abootimg \
 	-u ${WORKDIR}/chroot_rootfs_${DEVICE}/boot/boot.img-postmarketos-${KERNEL} \
-	-k zImage-dtbs \
+	-k Image-dtbs \
 	-c "bootsize=$BOOTSIZE" || exit
 fastboot --cmdline "${CMDLINE}" boot ${WORKDIR}/chroot_rootfs_${DEVICE}/boot/boot.img-postmarketos-${KERNEL} || exit
 
