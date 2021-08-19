@@ -41,7 +41,7 @@ jobs:
           pip3 install -U --user tuxmake
           tuxmake --directory linux --build-dir=cache/ --target-arch=aarch64 -k $KBUILD_DEFCONFIG  --kconfig-add $KBUILD_DEFCONFIG_PMOS $TUXMAKE_EXTRA_OPTS
           cd /home/runner/.cache/tuxmake/builds/1/
-          skales-dtbtool -p scripts/dtc/ -o dt.img .output/arch/arm64/boot/dts
+          skales-dtbtool -p scripts/dtc/ -o dt.img arch/arm64/boot/dts
           tar -cf linux-${BRANCH}.tar *
           cd -
           mv /home/runner/.cache/tuxmake/builds/1/linux-${BRANCH}.tar ./
