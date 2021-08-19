@@ -40,10 +40,7 @@ jobs:
           sudo apt-get -qq install -y --no-install-recommends -o=Dpkg::Use-Pty=0 ${{ env.ARCH_SPEC_PKGS }} git build-essential binutils-multiarch device-tree-compiler fakeroot libncurses5-dev libssl-dev ccache bison flex libelf-dev dwarves python3-pip socat mkbootimg skales > /dev/null
           pip3 install -U --user tuxmake
           tuxmake --directory linux --build-dir=cache/ --target-arch=aarch64 -k $KBUILD_DEFCONFIG  --kconfig-add $KBUILD_DEFCONFIG_PMOS $TUXMAKE_EXTRA_OPTS
-          ls -alsh cache/
-          echo ***********NEXT*************
-          ls -alsh cache/.output/arch/arm64/boot/dts
-          skales-dtbtool -p linux/scripts/dtc/ -o dt.img cache/.output/arch/arm64/boot/dts
+          skales-dtbtool -p linux/scripts/dtc/ -o /home/runner/.cache/tuxmake/builds/1/dt.img cache/arch/arm64/boot/dts
           cd /home/runner/.cache/tuxmake/builds/1/
           tar -cf linux-${BRANCH}.tar *
           cd -
