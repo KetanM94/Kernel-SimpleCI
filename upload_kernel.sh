@@ -42,9 +42,6 @@ export WORK="$(pmbootstrap config work)"
 export TEMP="$WORK/chroot_native/tmp/mainline/"
 mkdir -p "$TEMP"
 cp Image  "$TEMP"/zImage
-cp "/tmp/postmarketOS-export/boot.img-$DEVICE" "$TEMP/boot.img"
-cp "/tmp/postmarketOS-export/initramfs-$DEVICE" "$TEMP/initramfs"
-cp dt.img "$TEMP/dt.img"
 
 pmbootstrap chroot -- mkbootimg-osm0sis \
     --kernel "/tmp/mainline/zImage" \
@@ -58,7 +55,7 @@ pmbootstrap chroot -- mkbootimg-osm0sis \
     --tags_offset "0x00000100" \
     --pagesize "2048" \
     -o "/tmp/mainline/boot.img"
-fastboot --cmdline "${CMDLINE}" boot ${WORKDIR}/chroot_rootfs_${DEVICE}/boot/boot.img-postmarketos-${KERNEL} || exit
+fastboot --cmdline "${CMDLINE}" boot ${WORKDIR}/chroot_native//tmp/mainline/boot.img || exit
 
 echo ":: Waiting for device getting online..."
 i=0
