@@ -48,9 +48,9 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ env.KERNEL_NAME }}-${{ matrix.kernel }}"
+          automatic_release_tag: "${{ matrix.kernel }}"
           prerelease: true
-          title: "Build ${{ env.KERNEL_NAME }}-${{ matrix.kernel }}"
+          title: "Build ${{ matrix.kernel }}"
           files: |
             *.tar
   dtbs:
